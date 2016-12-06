@@ -1,0 +1,15 @@
+{
+  "name": "gridfs-photoapi",
+  "version": "1.0.0",
+  "description": "sample code for simple web api to upload and download photos with a mongodb-gridfs back end",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rob Walters",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "mongodb": "^2.2.12"
+  }
+}
