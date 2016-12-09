@@ -3,8 +3,10 @@ var app = express()
 var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
+//Change this connection string to your local MongoDB
 var url = 'mongodb://192.168.0.16:27017/MyDocumentsDB';
- 
+
+//Usage /photos/FILENAME
 app.get('/photos/:PhotoFile', function (req, res) {
     var pfile = req.params.PhotoFile;
   
@@ -21,7 +23,6 @@ app.get('/photos/:PhotoFile', function (req, res) {
 
         bucket.openDownloadStreamByName(pfile).pipe(res);
         
-
     });
 
 })
