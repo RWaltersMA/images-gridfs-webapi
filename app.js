@@ -5,10 +5,6 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var url = 'mongodb://192.168.0.16:27017/MyDocumentsDB';
  
-app.get('/', function (req, res) {
-  res.send('Hello World!')
-})
-
 app.get('/photos/:PhotoFile', function (req, res) {
     var pfile = req.params.PhotoFile;
   
