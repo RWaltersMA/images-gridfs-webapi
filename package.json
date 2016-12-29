@@ -9,7 +9,11 @@
   "author": "Rob Walters",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.4.7",
+    "ejs": "^2.5.5",
     "express": "^4.14.0",
-    "mongodb": "^2.2.12"
+    "mongodb": "^2.2.12",
+    "multer": "^1.2.1",
+    "multer-gridfs-storage": "^1.0.0"
   }
 }

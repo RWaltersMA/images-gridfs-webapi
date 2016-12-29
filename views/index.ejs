@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GRIDFS Example</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+</head>
+<body>
+   <div class="container" style="margin-top:10px;">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="#">Photo Storage and Retrieval Demo</a>
+                <ul class="nav">
+                    <li class="active"><a href="/">All photos</a></li>
+                    <li><a href="/new">Upload Photo</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span12">
+                <% Photos.forEach(function(photo) { %>
+                    <div>
+                        <h1><a href="/photos/<%= photo.filename %>"><%= photo.filename %></a></h1>
+                        <p>
+                            Length: <%= photo.length %>
+                        </p>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

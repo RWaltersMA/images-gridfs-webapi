@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GRIDFS Example</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <!--Only using JQuery to make the Browse file button pretty-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+function handleFiles() {
+        var PhotoFile = document.getElementById('HiddenInputFilename').files[0];
+       // var headers = { Authorization: 'Bearer @ViewBag.AccessToken'};
+        var uploadUrl = '/upload';
+       
+        var formData = new FormData();
+       // formData.append('description','myvalue');
+       formData.append('filename',PhotoFile.name);
+        formData.append('file',PhotoFile, PhotoFile.name);
+         $.ajax({
+            url: uploadUrl,
+           // headers: headers,
+            method: 'POST',
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+            contentType: false,
+            data: formData
+         }).done(function(data)
+            {
+                document.getElementById('lblStatus').innerHTML = 'Photo Uploaded !';
+            }).fail(function(data)
+            {
+                document.getElementById('lblStatus').innerHTML = 'Photo failed to upload !';
+            }); 
+
+    //Prevent the form from trying to post itself again
+   event.preventDefault();
+
+}
+/*
+       // var headers = { Authorization: 'Bearer @ViewBag.AccessToken'};
+        var uploadUrl = '/upload';
+
+    //    var files = fileSelect.files;
+        var formData = new FormData();
+
+        formData.append('file',files[0], files[0].name);
+
+        // Add the destination folder for the upload to the form
+//formData.append('parent_id', '0');
+
+        $.ajax({
+            url: uploadUrl,
+           // headers: headers,
+            type: 'POST',
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+            contentType: false,
+            data: formData
+        }).complete(function ( data ) {
+            uploadButton.innerHTML = 'Upload';
+            // Log the JSON response to prove this worked
+            console.log(data.responseText);
+            location.reload(true);
+        });*/
+</script>
+
+</head>
+<body>
+   <div class="container" style="margin-top:10px;">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="#">Photo Storage and Retrieval Demo</a>
+                <ul class="nav">
+                    <li><a href="/">All photos</a></li>
+                    <li class="active"><a href="/new">Upload Photo</a></li>
+                </ul>
+            </div>
+        </div>
+      <form class="form-horizontal" enctype="multipart/form-data" method="post" name="fileinfo">
+        <div class="control-group">
+        <span class="btn btn-primary" onclick="$(this).parent().find('input[type=file]').click();">Browse</span>
+            <label class="control-label" for="HiddenInputFilename">Filename</label>
+               <input type="file" id="HiddenInputFilename" onchange="$('#inputFilename').val($(this).val().split(/[\\|/]/).pop());" style="display: none;" >
+        <input type="text" id="inputFilename" placeholder="Filename..." >
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputDescription">Description</label>
+            <div class="controls">
+               <input type="text" id="inputDescription" placeholder="Description">
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+            <button type="submit" class="btn" id="uploadButton" onclick="handleFiles()" >Upload Photo</button><br><br>
+            <label class="label" id="lblStatus"></label>
+            </div>
+        </div>
+    </form>
+    </div>
+</body>
+</html>

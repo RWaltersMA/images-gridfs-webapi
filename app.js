@@ -1,16 +1,47 @@
-var express = require('express')
+var express = require('express');
 var app = express()
 var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
-//Change this connection string to your local MongoDB
-var url = 'mongodb://192.168.0.16:27017/MyDocumentsDB';
+var multer=require('multer');
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+var db;
+var url = require('url');
+ 
+var settings = {
+    host: '192.168.0.16',
+    port: 27017,
+    database: 'MyDocumentsDB'
+};
+ 
+var connectionString = url.format({
+    protocol: 'mongodb',
+    slashes: true,
+    hostname: settings.host,
+    port: settings.port,
+    pathname: settings.database
+});
+// The client should send any metadata over including the desired filename, etc.
+// the functions below will fetch them from the incoming req object at run-time
+var storage = require('multer-gridfs-storage')({
+    url: connectionString,
+    filename: function (req, file, cb) {
+      cb(null,  file.originalname );
+  },
+    metadata: function (req, metadata, cb) {
+        cb(null, { 'test' : '345345'})
+    }
+        });
+    var upload = multer({ storage: storage });
+
 
 app.get('/photos',function (req,res)
 {
     res.writeHead(200, {'Content-Type':'text/html'});
   
-    MongoClient.connect(url, function(err, db) 
+    MongoClient.connect(connectionString, function(err, db) 
     {
         assert.equal(null, err);
 
@@ -53,7 +84,7 @@ app.get('/photos',function (req,res)
 app.get('/photos/:PhotoFile', function (req, res) {
     var pfile = req.params.PhotoFile;
   
-    MongoClient.connect(url, function(err, db) 
+    MongoClient.connect(connectionString, function(err, db) 
     {
         assert.equal(null, err);
         var bucket = new mongodb.GridFSBucket(db, 
@@ -69,7 +100,66 @@ app.get('/photos/:PhotoFile', function (req, res) {
     });
 
 })
+//Render home page 
+app.get('/', function(request, response) {
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+    var Photos=[];
+
+    var bucket = new mongodb.GridFSBucket(db, 
+        {
+        chunkSizeBytes: 131072,
+        bucketName: 'myfiles'
+        });
+        var d=bucket.find().toArray().then((docs) => {
+       
+
+       docs.forEach((item, idx, array) => 
+       {
+           var size = parseInt(item['length'], 10);
+           size=size/1024; // Convert to kB
+
+           Photos.push(
+               {
+                   length: size,
+                   filename: item['filename']
+                  
+               }
+           );
+       }
+       );
+
+        
+          response.render('index',{Photos:Photos});
+        }
+        );
+
+     
+        });
+
+app.get('/new', function(request, response) {
+
+    response.render('new');
 })
+
+//the name 'file' should match what the key value of the image that is coming over in the FormData
+//in our example, refer to new.ejs, " formData.append('file',PhotoFile, PhotoFile.name);" 
+app.post('/upload', upload.single('file'), function (req, res, next) 
+{
+    console.log(req);
+    
+    res.sendStatus(201);
+    res.end();
+
+})
+//Main Entry Point, create the MongoDB Connection and use connection-pooling from the driver
+MongoClient.connect(connectionString, function(err, database) {
+
+    assert.equal(null, err);
+    if(err) throw err;
+
+    db = database;
+
+  // Start the application after the database connection is ready
+  app.listen(3000);
+  console.log("Listening on port 3000");
+});
