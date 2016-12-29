@@ -19,7 +19,7 @@
             <div class="span12">
                 <% Photos.forEach(function(photo) { %>
                     <div>
-                        <h1><a href="/photos/<%= photo.filename %>"><%= photo.filename %></a></h1>
+                        <h1><a href="/photos/<%= photo.id %>"><%= photo.filename %></a></h1>
                         <p>
                             Length: <%= photo.length %>
                         </p>
